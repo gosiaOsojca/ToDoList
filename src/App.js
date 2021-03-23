@@ -16,15 +16,17 @@ class App extends Component {
     componentDidMount() {
         const storageItems = localStorage.getItem('items');
         const parsedItems = JSON.parse(storageItems);
-        const items = [];
-        for (const item of parsedItems) {
-            const input = {
-                value: item.value,
-                isChecked: item.isChecked
-            };
-            items.push(input);
+        if (parsedItems) {
+            const items = [];
+            for (const item of parsedItems) {
+                const input = {
+                    value: item.value,
+                    isChecked: item.isChecked
+                };
+                items.push(input);
+            }
+            this.setState({ inputs: items });
         }
-        this.setState({ inputs: items});
     }
 
     onInputChange = event => {
