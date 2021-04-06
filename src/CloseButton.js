@@ -1,9 +1,9 @@
 function CloseButton({removeItem}) {
     return (
-        <span
+        <button
         className='close'
         onClick={removeItem}
-        >x</span>
+        >x</button>
     );
 }
 

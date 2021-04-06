@@ -30,6 +30,7 @@ body {
 .header__input {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 3px;
 }
 
 .input {
@@ -41,14 +42,19 @@ body {
   font-size: 16px;
 }
 
+.input--incorrect {
+  border: 1px solid red;
+}
+
 .add-button {
-  width: 20%;
+  width: 25%;
   padding: 10px;
   background: #fd5d76;
   color: white;
   text-align: center;
   font-size: 14px;
   cursor: pointer;
+  border: none;
   border-radius: 56px;
   font-weight: 600;
 }
@@ -98,6 +104,8 @@ body {
   position: absolute;
   right: 50px;
   font-size: 17px;
+  border: none;
+  background: none;
 }
 
 .close:hover {
@@ -131,4 +139,14 @@ body {
   font-size: 14px;
   color: #858585;
   margin-left: 12px;
+}
+
+.error-message {
+  font-size: 10px;
+  color: red;
+  display: none;
+}
+
+.error-message--visible {
+  display: inline-block;
 }

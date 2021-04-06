@@ -7,100 +7,104 @@ class App extends Component {
     constructor() {
         super()
         this.state = {
-            inputfield: '',
-            inputs: [],
-            saveButtonClassActive: false
+            newToDoItem: '',
+            toDoItems: [],
+            persistData: false,
+            incorrectEntry: false
         };
+        this.localStorageItems = 'items';
     }
 
+
+
     componentDidMount() {
-        const storageItems = localStorage.getItem('items');
-        const parsedItems = JSON.parse(storageItems);
+        const storageItems = localStorage.getItem(this.localStorageItems);
+        let parsedItems;
+        if (storageItems) {
+            try {
+                parsedItems = JSON.parse(storageItems);
+            } catch (e) {
+                alert(e);
+            }
+        }
         if (parsedItems) {
-            const items = [];
-            for (const item of parsedItems) {
-                const input = {
+            const items = parsedItems.reduce((arrayItems, item) => {
+                arrayItems.push({
                     value: item.value,
                     isChecked: item.isChecked
-                };
-                items.push(input);
-            }
-            this.setState({ inputs: items });
+                });
+                return arrayItems;
+            }, []);
+
+            this.setState({ toDoItems: items });
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.state.persistData) {
+            this.saveToLocalStorage();
         }
     }
 
     onInputChange = event => {
-        this.setState({ inputfield: event.target.value })
+        this.setState({ newToDoItem: event.target.value })
     }
 
-    onAddButtonClick = () => {
-        if (this.state.inputfield) {
-            this.setState(state => {
-                const item = {
-                    value: state.inputfield,
+    onAddButtonClick = (e) => {
+        e.preventDefault();
+        if (this.state.newToDoItem) {
+            this.setState({
+                toDoItems: this.state.toDoItems.concat({
+                    value: this.state.newToDoItem,
                     isChecked: false
-                };
-                const inputs = state.inputs.concat(item);
-                return {
-                    inputs,
-                    inputfield: '',
-                };
-            }, () => {
-                if (this.state.saveButtonClassActive) {
-                    this.saveToLocalStorage();
-                }
+                }), newToDoItem: '', incorrectEntry: false
             })
         } else {
-            alert("Fill the field");
+            this.setState({ incorrectEntry: true });
         }
-
     }
 
-    onDeleteButtonClick = event => {
+    onDeleteButtonClick = item => {
         this.setState({
-            inputs: this.state.inputs.filter(function (item) {
-                if (item.value !== event.target.previousSibling.textContent) {
-                    return item;
+            toDoItems: this.state.toDoItems.filter(function (singleItem) {
+                if (singleItem.value !== item.value) {
+                    return singleItem;
                 }
             })
-        }, () => {
-            if (this.state.saveButtonClassActive) {
-                this.saveToLocalStorage();
-            }
         });
     }
 
     saveButtonToggleClass = () => {
-        const currentState = this.state.saveButtonClassActive;
-        this.setState({ saveButtonClassActive: !currentState });
+        const currentState = this.state.persistData;
+        this.setState({ persistData: !currentState });
     }
 
     itemToggleClass = item => {
-        const items = this.state.inputs.map((input) => {
+        const items = this.state.toDoItems.map((input) => {
             return item === input ? { ...item, isChecked: !item.isChecked } : input;
         })
 
-        this.setState({ inputs: items });
+        this.setState({ toDoItems: items });
     }
 
     saveToLocalStorage = () => {
-        localStorage.setItem('items', JSON.stringify(this.state.inputs));
+        try {
+            localStorage.setItem(this.localStorageItems, JSON.stringify(this.state.toDoItems));
+        } catch (e) {
+            alert(e);
+        }
     }
 
     removeFromLocalStorage = () => {
-        localStorage.removeItem('items');
+        localStorage.removeItem(this.localStorageItems);
     }
 
     render() {
-        const saveButtonClassActive = this.state.saveButtonClassActive;
-        if (saveButtonClassActive) {
-
-        }
         return (
             <div className='container'>
-                <AppHeader inputChange={this.onInputChange} addItem={this.onAddButtonClick} inputValue={this.state.inputfield} />
-                <ItemsList items={this.state.inputs} removeItem={this.onDeleteButtonClick} changeItemStatus={this.itemToggleClass} />
-                <AppFooter buttonClass={this.state.saveButtonClassActive ? 'save-button save-button--clicked' : 'save-button'} changeButton={this.saveButtonToggleClass} addToStorage={this.state.saveButtonClassActive ? this.removeFromLocalStorage : this.saveToLocalStorage} />
+                <AppHeader inputClass={this.state.incorrectEntry ? 'input input--incorrect' : 'input'} inputChange={this.onInputChange} addItem={this.onAddButtonClick} inputValue={this.state.newToDoItem} errorMessageClass={this.state.incorrectEntry ? 'error-message error-message--visible' : 'error-message'}/>
+                <ItemsList items={this.state.toDoItems} removeItem={this.onDeleteButtonClick} changeItemStatus={this.itemToggleClass} />
+                <AppFooter buttonClass={this.state.persistData ? 'save-button save-button--clicked' : 'save-button'} changeButton={this.saveButtonToggleClass} addToStorage={this.state.persistData ? this.removeFromLocalStorage : this.saveToLocalStorage} />
             </div>
         );
     }

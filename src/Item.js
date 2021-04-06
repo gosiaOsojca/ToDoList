@@ -2,9 +2,11 @@ import CloseButton from './CloseButton';
 
 function Item(props) {
     return (
-        <li className={props.className}>
+        <li
+            className={props.className}
+            onClick={props.onClick}
+        >
             <span
-                onClick={props.onClick}
                 className='list__item-span'>{props.content}
             </span>
             <CloseButton removeItem={props.removeItem} />

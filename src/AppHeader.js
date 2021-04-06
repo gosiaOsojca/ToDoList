@@ -1,22 +1,26 @@
-function AppHeader({ inputChange, addItem, inputValue }) {
+function AppHeader({ inputClass, inputChange, addItem, inputValue, errorMessageClass }) {
     return (
         <div className='header'>
             <h2 className='header__title'>To Do List</h2>
-            <div className='header__input'>
+            <form
+                className='header__input'
+                onSubmit={addItem}
+            >
                 <input
-                    className='input'
+                    className={inputClass}
                     type='text'
-                    id='input'
                     placeholder='New Task...'
                     onChange={inputChange}
                     value={inputValue}
                 />
-                <span
+                <button
                     className='add-button'
-                    id='addButton'
-                    onClick={addItem}
-                >Add</span>
-            </div>
+                    type='submit'
+                >Add</button>
+            </form>
+            <span
+                className={errorMessageClass}
+            >This field is required!</span>
         </div>
     );
 }

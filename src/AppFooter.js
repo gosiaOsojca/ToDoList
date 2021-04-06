@@ -3,7 +3,6 @@ function AppFooter({ changeButton, buttonClass, addToStorage}) {
         <div className='footer'>
             <button
                 className={buttonClass}
-                id='saveButton'
                 onClick={(e) => {changeButton(e); addToStorage(e)}}
             ></button>
             <span className='footer-span'>Save in local storage</span>
