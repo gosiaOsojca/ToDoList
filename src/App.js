@@ -1,7 +1,6 @@
 import { Component } from 'react';
-import AppHeader from './AppHeader';
-import ItemsList from './ItemsList';
-import AppFooter from './AppFooter';
+import TodoList from './modules/todo-list/TodoList';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 class App extends Component {
     constructor() {
@@ -15,8 +14,6 @@ class App extends Component {
         this.localStorageItems = 'items';
     }
 
-
-
     componentDidMount() {
         const storageItems = localStorage.getItem(this.localStorageItems);
         let parsedItems;
@@ -28,13 +25,12 @@ class App extends Component {
             }
         }
         if (parsedItems) {
-            const items = parsedItems.reduce((arrayItems, item) => {
-                arrayItems.push({
+            const items = parsedItems.map((item) => {
+                return {
                     value: item.value,
                     isChecked: item.isChecked
-                });
-                return arrayItems;
-            }, []);
+                }
+            });
 
             this.setState({ toDoItems: items });
         }
@@ -101,11 +97,25 @@ class App extends Component {
 
     render() {
         return (
-            <div className='container'>
-                <AppHeader inputClass={this.state.incorrectEntry ? 'input input--incorrect' : 'input'} inputChange={this.onInputChange} addItem={this.onAddButtonClick} inputValue={this.state.newToDoItem} errorMessageClass={this.state.incorrectEntry ? 'error-message error-message--visible' : 'error-message'}/>
-                <ItemsList items={this.state.toDoItems} removeItem={this.onDeleteButtonClick} changeItemStatus={this.itemToggleClass} />
-                <AppFooter buttonClass={this.state.persistData ? 'save-button save-button--clicked' : 'save-button'} changeButton={this.saveButtonToggleClass} addToStorage={this.state.persistData ? this.removeFromLocalStorage : this.saveToLocalStorage} />
-            </div>
+            <Router>
+                <div className='container'>
+                    <Route path='/'>
+                        <TodoList
+                            inputClass={this.state.incorrectEntry ? 'input input--incorrect' : 'input'}
+                            inputChange={this.onInputChange}
+                            addItem={this.onAddButtonClick}
+                            inputValue={this.state.newToDoItem}
+                            errorMessageClass={this.state.incorrectEntry ? 'error-message error-message--visible' : 'error-message'}
+                            items={this.state.toDoItems}
+                            removeItem={this.onDeleteButtonClick}
+                            changeItemStatus={this.itemToggleClass}
+                            buttonClass={this.state.persistData ? 'save-button save-button--clicked' : 'save-button'}
+                            changeButton={this.saveButtonToggleClass}
+                            addToStorage={this.state.persistData ? this.removeFromLocalStorage : this.saveToLocalStorage}
+                        />
+                    </Route>
+                </div>
+            </Router>
         );
     }
 }

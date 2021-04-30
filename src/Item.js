@@ -4,10 +4,11 @@ function Item(props) {
     return (
         <li
             className={props.className}
-            onClick={props.onClick}
         >
             <span
-                className='list__item-span'>{props.content}
+                className='list__item-span'
+                onClick={props.onClick}
+            >{props.content}
             </span>
             <CloseButton removeItem={props.removeItem} />
         </li>
