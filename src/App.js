@@ -1,21 +1,36 @@
 import { Component } from 'react';
 import TodoList from './modules/todo-list/TodoList';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
-class App extends Component {
-    constructor() {
-        super()
-        this.state = {
-            newToDoItem: '',
-            toDoItems: [],
-            persistData: false,
-            incorrectEntry: false
-        };
-        this.localStorageItems = 'items';
-    }
 
-    componentDidMount() {
-        const storageItems = localStorage.getItem(this.localStorageItems);
+function App() {
+    const [newToDoItem, setNewToDoItem] = useState('');
+    const [toDoItems, setToDoItems] = useState([]);
+    const [persistData, setPersistData] = useState(false);
+    const [incorrectEntry, setIncorrectEntry] = useState(false);
+    const [localStorageItems, setLocalStorageItems] = useState('items');
+
+    const onInputChange = event => {
+        setNewToDoItem(event.target.value)
+    };
+
+    const onAddButtonClick = (e) => {
+        e.preventDefault();
+        if (newToDoItem) {
+            setToDoItems(toDoItems.concat({
+                value: newToDoItem,
+                isChecked: false
+            }));
+            setNewToDoItem('');
+            setIncorrectEntry(false);
+        } else {
+            setIncorrectEntry(true);
+        }
+    };
+
+    useEffect(() => {
+        const storageItems = localStorage.getItem(localStorageItems);
         let parsedItems;
         if (storageItems) {
             try {
@@ -32,92 +47,68 @@ class App extends Component {
                 }
             });
 
-            this.setState({ toDoItems: items });
+            setToDoItems(items);
         }
-    }
-
-    componentDidUpdate() {
-        if (this.state.persistData) {
-            this.saveToLocalStorage();
+        if (persistData) {
+            saveToLocalStorage();
         }
-    }
+    }, [])
 
-    onInputChange = event => {
-        this.setState({ newToDoItem: event.target.value })
-    }
+    const onDeleteButtonClick = item => {
+        setToDoItems(toDoItems.filter(function (singleItem) {
+            if (singleItem.value !== item.value) {
+                return singleItem;
+            }
+        })
+        );
+    };
 
-    onAddButtonClick = (e) => {
-        e.preventDefault();
-        if (this.state.newToDoItem) {
-            this.setState({
-                toDoItems: this.state.toDoItems.concat({
-                    value: this.state.newToDoItem,
-                    isChecked: false
-                }), newToDoItem: '', incorrectEntry: false
-            })
-        } else {
-            this.setState({ incorrectEntry: true });
-        }
-    }
+    const saveButtonToggleClass = () => {
+        const currentState = persistData;
+        setPersistData(!currentState);
+    };
 
-    onDeleteButtonClick = item => {
-        this.setState({
-            toDoItems: this.state.toDoItems.filter(function (singleItem) {
-                if (singleItem.value !== item.value) {
-                    return singleItem;
-                }
-            })
-        });
-    }
-
-    saveButtonToggleClass = () => {
-        const currentState = this.state.persistData;
-        this.setState({ persistData: !currentState });
-    }
-
-    itemToggleClass = item => {
-        const items = this.state.toDoItems.map((input) => {
+    const itemToggleClass = item => {
+        const items = toDoItems.map((input) => {
             return item === input ? { ...item, isChecked: !item.isChecked } : input;
         })
 
-        this.setState({ toDoItems: items });
-    }
+        setToDoItems(items);
+    };
 
-    saveToLocalStorage = () => {
+    const saveToLocalStorage = () => {
         try {
-            localStorage.setItem(this.localStorageItems, JSON.stringify(this.state.toDoItems));
+            localStorage.setItem(localStorageItems, JSON.stringify(toDoItems));
         } catch (e) {
             alert(e);
         }
-    }
+    };
 
-    removeFromLocalStorage = () => {
-        localStorage.removeItem(this.localStorageItems);
-    }
+    const removeFromLocalStorage = () => {
+        localStorage.removeItem(localStorageItems);
+    };
 
-    render() {
-        return (
-            <Router>
-                <div className='container'>
-                    <Route path='/'>
-                        <TodoList
-                            inputClass={this.state.incorrectEntry ? 'input input--incorrect' : 'input'}
-                            inputChange={this.onInputChange}
-                            addItem={this.onAddButtonClick}
-                            inputValue={this.state.newToDoItem}
-                            errorMessageClass={this.state.incorrectEntry ? 'error-message error-message--visible' : 'error-message'}
-                            items={this.state.toDoItems}
-                            removeItem={this.onDeleteButtonClick}
-                            changeItemStatus={this.itemToggleClass}
-                            buttonClass={this.state.persistData ? 'save-button save-button--clicked' : 'save-button'}
-                            changeButton={this.saveButtonToggleClass}
-                            addToStorage={this.state.persistData ? this.removeFromLocalStorage : this.saveToLocalStorage}
-                        />
-                    </Route>
-                </div>
-            </Router>
-        );
-    }
+    return (
+        <Router>
+            <div className='container'>
+                <Route path='/'>
+                    <TodoList
+                        inputClass={incorrectEntry ? 'input input--incorrect' : 'input'}
+                        inputChange={onInputChange}
+                        addItem={onAddButtonClick}
+                        inputValue={newToDoItem}
+                        errorMessageClass={incorrectEntry ? 'error-message error-message--visible' : 'error-message'}
+                        items={toDoItems}
+                        removeItem={onDeleteButtonClick}
+                        changeItemStatus={itemToggleClass}
+                        buttonClass={persistData ? 'save-button save-button--clicked' : 'save-button'}
+                        changeButton={saveButtonToggleClass}
+                        addToStorage={persistData ? removeFromLocalStorage : saveToLocalStorage}
+                    />
+                </Route>
+            </div>
+        </Router>
+    );
 }
 
 export default App;
