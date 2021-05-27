@@ -1,5 +1,5 @@
-import { Component } from 'react';
 import TodoList from './modules/todo-list/TodoList';
+import SignUp from './modules/SignUp';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
@@ -9,7 +9,7 @@ function App() {
     const [toDoItems, setToDoItems] = useState([]);
     const [persistData, setPersistData] = useState(false);
     const [incorrectEntry, setIncorrectEntry] = useState(false);
-    const [localStorageItems, setLocalStorageItems] = useState('items');
+    const [localStorageItems] = useState('items');
 
     const onInputChange = event => {
         setNewToDoItem(event.target.value)
@@ -91,21 +91,26 @@ function App() {
     return (
         <Router>
             <div className='container'>
-                <Route path='/'>
-                    <TodoList
-                        inputClass={incorrectEntry ? 'input input--incorrect' : 'input'}
-                        inputChange={onInputChange}
-                        addItem={onAddButtonClick}
-                        inputValue={newToDoItem}
-                        errorMessageClass={incorrectEntry ? 'error-message error-message--visible' : 'error-message'}
-                        items={toDoItems}
-                        removeItem={onDeleteButtonClick}
-                        changeItemStatus={itemToggleClass}
-                        buttonClass={persistData ? 'save-button save-button--clicked' : 'save-button'}
-                        changeButton={saveButtonToggleClass}
-                        addToStorage={persistData ? removeFromLocalStorage : saveToLocalStorage}
-                    />
-                </Route>
+                <Switch>
+                    <Route exact path='/'>
+                        <SignUp />
+                    </Route>
+                    <Route path='/ToDoList'>
+                        <TodoList
+                            inputClass={incorrectEntry ? 'input input--incorrect' : 'input'}
+                            inputChange={onInputChange}
+                            addItem={onAddButtonClick}
+                            inputValue={newToDoItem}
+                            errorMessageClass={incorrectEntry ? 'error-message error-message--visible' : 'error-message'}
+                            items={toDoItems}
+                            removeItem={onDeleteButtonClick}
+                            changeItemStatus={itemToggleClass}
+                            buttonClass={persistData ? 'save-button save-button--clicked' : 'save-button'}
+                            changeButton={saveButtonToggleClass}
+                            addToStorage={persistData ? removeFromLocalStorage : saveToLocalStorage}
+                        />
+                    </Route>
+                </Switch>
             </div>
         </Router>
     );

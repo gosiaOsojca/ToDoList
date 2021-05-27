@@ -150,3 +150,71 @@ body {
 .error-message--visible {
   display: inline-block;
 }
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form__input {
+  margin: 0 0 15px 0;
+  border: none;
+  border-radius: 10px;
+  width: 65%;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.form__input--error {
+  border: 2px solid red;
+}
+
+
+.form-button {
+  padding: 10px 40px;
+  background: #fd5d76;
+  color: white;
+  text-align: center;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 56px;
+  font-weight: 600;
+  margin: 15px 0 80px 0;
+  border: 1px solid #fd5d76;
+}
+
+.form-footer--span {
+  font-size: 12px;
+  color: #858585;
+}
+
+.form-footer--login {
+  font-size: 12px;
+  color: #fd5d76;
+  font-weight: 600;
+  margin-left: 10px;
+}
+
+.form-footer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+input::placeholder {
+  color: #c0c0c0;
+}
+
+.form-button--disabled {
+  cursor: not-allowed;
+  background: #fdc6ce;
+  border: 1px solid #fdc6ce;
+}
+
+.error {
+  align-self: flex-start;
+  margin: -10px 0 20px 60px;
+  font-size: 12px;
+  color: red;
+}
