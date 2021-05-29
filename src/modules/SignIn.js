@@ -4,9 +4,8 @@ import FormInput from '../FormInput';
 import FormButton from '../FormButton';
 
 
-function SignUp() {
+function SignIn() {
     const initialValues = {
-        name: '',
         email: '',
         password: '',
     };
@@ -14,11 +13,6 @@ function SignUp() {
     let validate = (values) => {
         let errors = {};
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-        if (!values.userName) {
-            errors.userName = 'Name is required';
-        } else if (values.userName.length > 255) {
-            errors.userName = 'Name too long';
-        }
         if (!values.email) {
             errors.email = 'Email is required';
         } else if (!regex.test(values.email)) {
@@ -38,13 +32,8 @@ function SignUp() {
 
     let history = useHistory();
 
-    function handleLogInClick() {
-        history.push('/SignIn');
-    }
-
     const submitForm = (values, formikBag) => {
         const jsonData = {
-            name: values.userName,
             email: values.email,
             password: values.password
         }
@@ -55,12 +44,12 @@ function SignUp() {
             body: JSON.stringify(jsonData)
         };
 
-        fetch('http://localhost:8888/v1/user/sign-up', requestOptions)
+        fetch('http://localhost:8888/v1/user/sign-in', requestOptions)
             .then(response => {
                 if (response.status == 201) {
-                    history.push('/SignUpConfirmation');
-                } else if (response.status == 409) {
-                    formikBag.setFieldError('email', 'The user with such email already signed up.');
+                    history.push('/ToDoList');
+                } else if (response.status == 404) {
+                    formikBag.setFieldError('email', 'The user with such email does not exist');
                 }
             })
     };
@@ -85,25 +74,12 @@ function SignUp() {
                 return (
                     <>
                         <div className='header'>
-                            <h2 className='header__title'>Sign Up</h2>
+                            <h2 className='header__title'>Sign In</h2>
                         </div>
                         <form
                             className='form'
                             onSubmit={handleSubmit}
                         >
-                            <FormInput
-                                className={errors.userName && touched.userName ?
-                                    'form__input form__input--error' : 'form__input'}
-                                type='text'
-                                placeholder='Name'
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                name='userName'
-                                value={values.userName}
-                            />
-                            {errors.userName && touched.userName && (
-                                <span className='error'>{errors.userName}</span>
-                            )}
                             <FormInput
                                 className={errors.email && touched.email ?
                                     'form__input form__input--error' : 'form__input'}
@@ -133,13 +109,9 @@ function SignUp() {
                             <FormButton
                                 className={dirty && isValid ? 'form-button' : 'form-button form-button--disabled'}
                                 disabled={!(dirty && isValid)}
-                                name='Sign Up'
+                                name='Sign In'
                             />
                         </form>
-                        <div className='form-footer'>
-                            <span className='form-footer--span'>Already have an account?</span>
-                            <span className='form-footer--login' onClick={handleLogInClick}>Log In</span>
-                        </div>
                     </>
                 );
             }}
@@ -147,4 +119,4 @@ function SignUp() {
     );
 }
 
-export default SignUp;
+export default SignIn;

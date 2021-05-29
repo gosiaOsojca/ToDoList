@@ -1,5 +1,7 @@
 import TodoList from './modules/todo-list/TodoList';
 import SignUp from './modules/SignUp';
+import SignIn from './modules/SignIn';
+import SignUpConfirmation from './modules/SignUpConfirmation';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
@@ -94,6 +96,12 @@ function App() {
                 <Switch>
                     <Route exact path='/'>
                         <SignUp />
+                    </Route>
+                    <Route path='/SignUpConfirmation'>
+                        <SignUpConfirmation />
+                    </Route>
+                    <Route path='/SignIn'>
+                        <SignIn />
                     </Route>
                     <Route path='/ToDoList'>
                         <TodoList

@@ -194,6 +194,7 @@ body {
   color: #fd5d76;
   font-weight: 600;
   margin-left: 10px;
+  cursor: pointer;
 }
 
 .form-footer {
@@ -217,4 +218,17 @@ input::placeholder {
   margin: -10px 0 20px 60px;
   font-size: 12px;
   color: red;
+}
+
+.sign-up-confirmation--span {
+  font-size: 14px;
+  color: #858585;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.sign-up-confirmation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
