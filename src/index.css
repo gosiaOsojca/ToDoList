@@ -223,8 +223,13 @@ input::placeholder {
 .sign-up-confirmation--span {
   font-size: 14px;
   color: #858585;
-  margin-bottom: 15px;
   text-align: center;
+  margin: 0;
+}
+
+.sign-up-confirmation--text {
+  margin-top: 5px;
+  margin-bottom: 15px;
 }
 
 .sign-up-confirmation {

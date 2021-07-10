@@ -1,39 +1,26 @@
-import { Formik } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import { useHistory } from "react-router-dom";
-import FormInput from '../FormInput';
-import FormButton from '../FormButton';
 
 
 function SignUp() {
+    const signInSchema = Yup.object().shape({
+        userName: Yup.string()
+            .required('Name is required')
+            .max(255, 'Name too long'),
+        email: Yup.string().email()
+            .required('Email is required')
+            .max(255, 'Email too long'),
+        password: Yup.string()
+            .required('Password is required')
+            .min(8, 'Password too short')
+            .max(255, 'Password too long'),
+    });
+
     const initialValues = {
         name: '',
         email: '',
         password: '',
-    };
-
-    let validate = (values) => {
-        let errors = {};
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-        if (!values.userName) {
-            errors.userName = 'Name is required';
-        } else if (values.userName.length > 255) {
-            errors.userName = 'Name too long';
-        }
-        if (!values.email) {
-            errors.email = 'Email is required';
-        } else if (!regex.test(values.email)) {
-            errors.email = 'Invalid Email';
-        } else if (values.email.length > 255) {
-            errors.email = 'Email too long';
-        }
-        if (!values.password) {
-            errors.password = 'Password is required';
-        } else if (values.password.length < 8) {
-            errors.password = 'Password too short';
-        } else if (values.password.length > 255) {
-            errors.password = 'Password too long';
-        }
-        return errors;
     };
 
     let history = useHistory();
@@ -63,79 +50,76 @@ function SignUp() {
                     formikBag.setFieldError('email', 'The user with such email already signed up.');
                 }
             })
+            .catch(err => alert(err))
     };
 
     return (
         <Formik
             initialValues={initialValues}
-            validate={validate}
+            validationSchema={signInSchema}
             onSubmit={submitForm}
         >
             {(formik) => {
-                const {
-                    values,
-                    handleChange,
-                    handleSubmit,
-                    errors,
-                    touched,
-                    handleBlur,
-                    isValid,
-                    dirty
-                } = formik;
+                const { errors, touched, isValid, dirty } = formik;
                 return (
                     <>
                         <div className='header'>
                             <h2 className='header__title'>Sign Up</h2>
                         </div>
-                        <form
+                        <Form
                             className='form'
-                            onSubmit={handleSubmit}
                         >
-                            <FormInput
+                            <Field
                                 className={errors.userName && touched.userName ?
                                     'form__input form__input--error' : 'form__input'}
                                 type='text'
                                 placeholder='Name'
-                                onChange={handleChange}
-                                onBlur={handleBlur}
                                 name='userName'
-                                value={values.userName}
+                                data-testid='userName'
                             />
-                            {errors.userName && touched.userName && (
-                                <span className='error'>{errors.userName}</span>
-                            )}
-                            <FormInput
+                            <ErrorMessage
+                                name="userName"
+                                component="span"
+                                className="error"
+                            />
+
+                            <Field
                                 className={errors.email && touched.email ?
                                     'form__input form__input--error' : 'form__input'}
                                 type='email'
                                 placeholder='Email'
-                                onChange={handleChange}
-                                onBlur={handleBlur}
                                 name='email'
-                                value={values.email}
+                                data-testid='email'
                             />
-                            {errors.email && touched.email && (
-                                <span className='error'>{errors.email}</span>
-                            )}
-                            <FormInput
+                            <ErrorMessage
+                                name="email"
+                                component="span"
+                                className="error"
+                            />
+
+                            <Field
                                 className={errors.password && touched.password ?
                                     'form__input form__input--error' : 'form__input'}
                                 type='password'
                                 placeholder='Password'
-                                onChange={handleChange}
-                                onBlur={handleBlur}
                                 name='password'
-                                value={values.password}
+                                data-testid='password'
                             />
-                            {errors.password && touched.password && (
-                                <span className='error'>{errors.password}</span>
-                            )}
-                            <FormButton
-                                className={dirty && isValid ? 'form-button' : 'form-button form-button--disabled'}
-                                disabled={!(dirty && isValid)}
-                                name='Sign Up'
+                            <ErrorMessage
+                                name="password"
+                                component="span"
+                                className="error"
                             />
-                        </form>
+
+                            <button
+                                // className={!(dirty && isValid) ? 'form-button form-button--disabled' : 'form-button'}
+                                className='form-button'
+                                // disabled={!(dirty && isValid)}
+                                type="submit"
+                            >
+                                Sign Up
+                            </button>
+                        </Form>
                         <div className='form-footer'>
                             <span className='form-footer--span'>Already have an account?</span>
                             <span className='form-footer--login' onClick={handleLogInClick}>Log In</span>
